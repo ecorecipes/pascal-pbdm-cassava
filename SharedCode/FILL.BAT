@@ -1,0 +1,3 @@
+DEL TEMPO*
+WXDATAFILL %1 %2
+
