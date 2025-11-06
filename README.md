@@ -43,6 +43,7 @@ Luigi Ponti
 
 GPL-3.0-or-later
 
-## Author
+## Authors
 
-Andrew Paul Gutierrez (University of California, Berkeley / CASAS Global)
+- Andrew Paul Gutierrez (University of California, Berkeley / CASAS Global)
+- Luigi Ponti (ENEA / CASAS Global)
