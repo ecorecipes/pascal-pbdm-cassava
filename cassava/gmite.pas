@@ -33,9 +33,7 @@ begin
 	LeafAgePref[11]:=0.0;
 	LeafAgePref[12]:=0.0;
 
-	
-
-{kgm=50
+{
  0          68                       154      166                          486
  |----eggs---|--------immatures--------|-preova-|--------adults ovip---------|
 
@@ -65,7 +63,7 @@ begin
 		begin
 			gmfin:=false;
 			gmgo:=false;
-			for i:=1 to kova do gmova[i]:=0.0; 
+			for i:=1 to kova do gmova[i]:=0.0; {??????????????0.01?????????????????}
 			for i:=1 to kgm do gmn[i]:=0.0;
 		   	gmovnm:=0.0; gmimnm:=0.0; gmpreo:=0.0; gmadnm:=0.0; gmtot:=0.0;
 		    gmdam:= 0.0; cumgmdam:=0.0;
@@ -104,11 +102,11 @@ begin
 				gmn[i]:=0.01;
 				gmova[i]:=0.01;
 			end;
-			gmovnm:=0.0;
-			gmimnm:=0.0;
-			gmpreo:=0.0;
-			gmadnm:=0.0;
-			gmtot :=0.0;
+			//gmovnm:=0.0;
+			//gmimnm:=0.0;
+			//gmpreo:=0.0;
+			//gmadnm:=0.0;
+			//gmtot :=0.0;
  			gmfin:=true;
  			with casPtrs[np]^ do gmthisplant:=false;
 			tgdelt:=0.0;
@@ -120,7 +118,7 @@ begin
 		{Estimate the mass of 4 mite stages.  Assume ova wgt=0.1micro grams, adults=1.0, linear interpolate for
 		 immatures with mean age>ova=43 and for preovs with mean age>ova=92.}
 		gmWgt[1]:=gmovnm*0.1;
-		gmwgt[2]:=gmimnm*(43.0/86.0); {They become adults 86 dd after ova.}
+		gmwgt[2]:=gmimnm*(43.0/86.0); {They become adults 98 dd after ova.}
 		gmwgt[3]:=gmpreo*(86.0/98.0);
 		gmwgt[4]:=gmadnm;
 		gmtotwgt:=0.0;
@@ -205,14 +203,14 @@ begin
 	
 	with gmptrs[np]^ do
 	begin
-	{ rain and Low Temp mort (see yaninek's thesis) }
+	{ rain and Temp mort (see yaninek's thesis) }
 	{apply rain (fungus) and temp mortality directly outside of delay}
 		rainPathlx:= 1.0;
 		rain:=precip;
-		if FMin then rainPathlx:= exp(-0.0185*rain);  {*****was 0.025}
-		
-		muTemp:=zerone( 0.000012*T4 - 0.001187*T3 + 0.042353*T2 - 0.666530*Tmean + 3.938533);
-
+		if FMin then rainPathlx:= exp(-0.025*rain);  {*****was 0.025}
+		muTemp:=zerone(0.000012*T4 - 0.001187*T3 + 0.042353*T2 - 0.666530*Tmean + 3.938533);
+//writeln('FMin', fmin:10, tb, rainpathlx:25:12, tb, precip:10:4); readln;
+		rain:=0.0;
 	{ apply abiotic mortality to active stages}
 		for i:=1 to kgm do gmn[i]:= gmn[i]*rainPathlx*(1.0-muTemp);
 		
@@ -220,15 +218,16 @@ begin
 		for i:=1 to kova do gmova[i]:=gmova[i]*rainPathlx*(1.0-muTemp);
 
 {loop to do sd mort, -- to move adlt mites from gmn array to gmimmigpoolb as f(gmsd). ke}
+
 		kadl:=round((98.0/delgm)*kgm);
 		for i:=1 to kgm do
 		begin
 			if ((immigmethod=2) and (i>=kadl)) then
-				gmimmigpoolb:=gmimmigpoolb+gmn[i]*(1.0 - gmsd);
+				gmimmigpoolb:=gmimmigpoolb+gmn[i]*(1.0-gmsd);
 			gmn[i]:=gmn[i]*gmsd;
 		end;
 	end;
-end; {Gmmor}
+end; {Gmmor }
 
 Procedure Gmimmig(np:integer);
 var
@@ -272,8 +271,8 @@ Procedure Gmdyn(np:integer);
 Function Ffec(Npc:single):single;
 {Assumes leaf Nitrogen % is from 0.0 to 5.0}
 	begin 
-		//ffec:= min(1.1, (0.22*Npc)) { from Wermelinger et al.-- APG};
-		ffec:=1.0; {*******not implimented************a}
+		ffec:= min(1.1, (0.22*Npc)) { from Wermelinger et al.-- APG};
+		ffec:=1.0; {**************************************************a}
 	end;
 
 Function Fdev(Npc:single):single;
@@ -283,17 +282,11 @@ Function Fdev(Npc:single):single;
 		fdev:=1.0; {not implimented }	
 	end;
 var
-   a,bn1,ff,gmout,immin,nadlts,q,ovout,T,T2,T3,T4:single;
+   a,bn1,ff,gmout,immin,nadlts,q,ovout:single;
 	i,ii:integer;   
 begin
-	T:=Tmean;
-	T2:=T*T;
-	T3:=T2*T;
-	T4:=T3*T;
-	
-	{ calculate temperature effects -- left skewed - normalized 18-34C}
-	{Yaninek et al. 1989 = -0.0164x4 + 1.7381x3 - 69.118x2 + 1224.7x - 8104}
-		ff:=max(0.0,min(1.0,(-0.0164*T4 + 1.7381*T3 - 69.118*T2 + 1224.7*T - 8104)/62.8));
+	{ calculate temperature effects q -- left skewed - normalized 18-34C}
+		ff:=max(0.0,(-0.0072*Tmean*Tmean*Tmean - 0.1295*Tmean*Tmean + 22.103*Tmean - 315.34)/45.4);
 
 	with gmptrs[np]^ do
 	begin
@@ -306,22 +299,19 @@ begin
 			if vgmadlt[i] > 0.0 then {wvec for adults}
 			begin
 				ii:=ii+1;
-				a:=ii+0.5; {ii = kCGM = 11.75 -> 50}
-	{ bn1 is eggs per day of females of age a at 24C with 0.90 correctinng for delk width  }
-	{2*(A3)/(1+1.15^A3)) - de Moriase 1985}
-				bn1:= bn1 + 0.90*2.0*a/(1+power(1.15,a))* gmn[i]*vgmadlt[i];
-				nadlts:= nadlts + gmn[i]*vgmadlt[i]*delkgm; 
+				a:=ii + 0.5; {ii = kcmb= 11.75 -> 50}
+		{ bn1 is eggs per day at 24C correct delk to day width }
+				bn1:= bn1 + 0.5*7.1*a/(1+power(1.325,a))*(gmn[i]+ 0.001)*vgmadlt[i];
+				nadlts:=nadlts + gmn[i]*vgmadlt[i]*delkgm;
 		//writeln(i:10,tb,'a  =', a:10:3,tb,bn1:10:3,tb,nadlts:10:4); readln;
 			end
 			else bn1:=0.0;
 		end;
-		
- {eggs delay model}
-		bn1:= bn1 * ff * gmsd * sexr * delkgm ; {temp effect, sd, sexratio}
+ {eggs delay}
+		bn1:=bn1 * ff * gmsd * sexr * delkgm {* ffec(npccon)}; {temp effect, sd, sexratio and nitrogen effect}
 		DelayNoPLR(bn1,ovout,gmova,delova,gdelt,kova);
-//		deltim :=gdelt/fdev(npccon);  {nitrogen effect not used?  05/10/2006}
-
- {actives delay model}
+//		deltim :=gdelt/fdev(npccon);               			   {nitrogen effect} //????  not used?  05/10/06  ????????????
+ {actives delay}
 		immin:=ovout*delova/kova; {output of gmova becomes input of gmn}
 		DelayNoPLR(immin,gmout,gmn,delgm,gdelt,kgm); 
 	end;

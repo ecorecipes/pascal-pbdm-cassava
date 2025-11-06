@@ -1,6 +1,6 @@
 Unit Nitr;
 interface
-uses globals,Modutils{,spatial};
+uses globals,Modutils,spatial;
 Procedure Ndemand(var plant:plantrec; vty:varietyrec);
 Procedure Nsupply(var plant:plantrec; var nuptkpot:single);
 Procedure Nratio(var plant:plantrec;nuptkpot:single);
