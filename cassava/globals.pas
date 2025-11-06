@@ -5,7 +5,7 @@ const
  kstem=50;
  kroot=50;
  kpred=50;
- kgm  =50;
+ kgm=50;
  kova=50;
  khj=50;
  kcmb=50;
@@ -15,13 +15,13 @@ const
 
 type
 	i100      = array[1..100] of integer;
-	Single100 = array[1..kfol] of single;
+	Single100  = array[1..kfol] of single;
 	single10  = array[1..10] of single;
 	single6   = array[1..6] of single;
-	a2darray  = array[1..22,1..22] of single;
-	weather   = array[1..73050] of single;	//73050=365.25*200  allows 200 years
-	weathers  = array[1..73050, 1..2] of single;
-	string4   = string[4];
+	a2darray   = array[1..22,1..22] of single;
+	weather   = array [1..73050] of single;	//73050=365.25*200  allows 200 years
+	weathers  = array [1..73050, 1..2] of single;
+	string4 = string[4];
 
 Varietyrec = record    
 {varietal variables }
@@ -105,12 +105,12 @@ plantrec = record
 {water}
 	wsdarray			: single10;{wsd record}
 	iwsd				: integer;{ptr to most recent ws in wsdarray}
-	wsd				    : single;
-	wdemand {was tritch}: single; {plant demand for transpiration}
+	wsd				: single;
+	wdemand    {was tritch}		: single; {plant demand for transpiration}
 	transpire			: single; {water used by plant}
 	prevawat			: single; 
 	watfirst			: boolean;
-	watertime,es1,es2   : single;
+	watertime,es1,es2		: single;
    {associated with a plant  or with a region of field?}
    {nitrogen}
 	folnit,stnit,rtnit		: Single100;
