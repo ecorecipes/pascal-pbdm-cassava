@@ -45,5 +45,5 @@ GPL-3.0-or-later
 
 ## Authors
 
-- Andrew Paul Gutierrez (University of California, Berkeley / CASAS Global)
-- Luigi Ponti (ENEA / CASAS Global)
+- Andrew Paul Gutierrez <casas.kensington@gmail.com>
+- Luigi Ponti <quartese@gmail.com>
