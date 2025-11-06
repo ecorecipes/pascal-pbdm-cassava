@@ -45,5 +45,5 @@ GPL-3.0-or-later
 
 ## Authors
 
-- Andrew Paul Gutierrez <casas.kensington@gmail.com>
-- Luigi Ponti <quartese@gmail.com>
+- Andrew Paul Gutierrez (University of California, Berkeley / CASAS Global - Center for Analysis of Sustainable Agriculture Systems)
+- Luigi Ponti (ENEA - Agenzia nazionale per le nuove tecnologie, l'energia e lo sviluppo economico sostenibile / CASAS Global)
