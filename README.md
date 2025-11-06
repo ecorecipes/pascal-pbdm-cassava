@@ -1,5 +1,7 @@
 # Pascal code for the cassava tri-trophic PBDM system
 
+[![DOI](https://zenodo.org/badge/914567284.svg)](https://doi.org/10.5281/zenodo.17544160)
+
 ## Description
 
 The meta population cassava GIS model was developed for scientific purposes and cannot be used for commercial purposes. Copyright is held by the [Center for Analysis of Sustainable Agriculture Systems](https://www.casasglobal.org/). The code has developer idiosyncrasies and is best used to develop similar code for other systems. The code is offered free access without warranty.
