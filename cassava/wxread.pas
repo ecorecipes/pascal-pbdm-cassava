@@ -7,6 +7,32 @@ procedure readwx(var wxfile:text;Firstdate,Lastdate:single;
 
 Implementation
 
+(*
+//for metacot
+Procedure SetupStations;
+var
+	i,icol,irow:integer;
+	intstr:string;
+	LonMid,LatMid:real;
+id:string;
+begin
+	lonmid:=Longitude;
+	latmid:=LatitudeDegrees;
+	irow:=1;
+	for i:=1 to 100 do{ with CotPlantArray[i]^ do}
+	begin
+		str(i,intstr);
+		id:=location+intstr;
+		icol:=((i-1)mod 10)+1;
+//Longitude,LatitudeDegrees
+writeln(irow:3,icol:3,' ',id);
+		if icol=10 then inc(irow);
+readln;
+	end;
+end;
+*)
+
+ 
 procedure wxmissing;
 (*
 	Check for missing data markers in wx file and fill in with
@@ -34,19 +60,18 @@ begin
 		if(relhum[i]=-99.0)then rmiss:=true;
 		if(winds[i]=-99.0)then wmiss:=true;
 	end;            
-writeln('wxread. tmiss= ',tmiss,' ndays= ',ndays);
-writeln('wxread. smiss= ',smiss);
-writeln('wxread. pmiss= ',pmiss);
-writeln('wxread. rmiss= ',rmiss);
-writeln('wxread. wmiss= ',wmiss);
-readln;
-if tmiss then
+
+	if tmiss then
 	begin
 		{default values for celsius temps:}
 		tmaxd:=25.0; 
 		tmind:=12.0;
 //		reporterror('Some temperature data is missing. Using tmax=25, tmin=12.');
 	end;
+	DefaultSolar:=200.0;
+	DefaultPrecip:=0.0;
+	DefaultRelHum:=55.0;
+	DefaultWind:=1.0;
 
 // Replace missing data with linear interpolations between previous good value and next good value.
 // t1=last previous value, t2=first value after dmiss run.
@@ -57,8 +82,10 @@ if tmiss then
 //Check Tmax data:
 		CountMiss:=0;
 		t1:=-99.0;
+		t2:=-99.0;
 		for i:=1 to ndays do
 		begin
+
 			if (temps[i,1]=-99.0) then
 			begin
 				CountMiss:=CountMiss+1;
@@ -66,7 +93,7 @@ if tmiss then
 				if CountMiss=1 then if i>1 then t1:= temps[i-1,1];
 				if CountMiss=1 then FirstMissing:=i-1;
 			end;
-			
+		
 			//Is this dmiss run at end of data?
 			if i=ndays then if (temps[i,1]=-99.0) then
 			begin
@@ -75,9 +102,10 @@ if tmiss then
 				for j:=FirstMissing to ndays do temps[j,1]:=FillValue;
 				countmiss:=0;
 			end;
- 
+
 			if ((temps[i,1]<>-99.0)and(CountMiss>0)) then
 			begin
+
 				//found the end of missing data run.
 				LastMissing:=i;
 				t2:=temps[i,1];
@@ -92,20 +120,24 @@ if tmiss then
 					Intercept:=t2-slope*Lastmissing;
 					for j:=firstMissing to LastMissing do
 						temps[j,1]:=Slope*j+Intercept;
+
 				end;
 
 				//when dmiss run is at beginning of data
 				if t1=-99.0 then for j:=firstMissing to LastMissing do temps[j,1]:=t2;
 
+				//reset for remaining tests
+				CountMiss:=0;
+				t1:=-99.0;
+				t2:=-99.0;
 			end;
-			//reset for remaining tests
-			CountMiss:=0;
-			t1:=-99.0;
+
 		end;
 
 //Check Tmin data:
 		CountMiss:=0;
 		t1:=-99.0;
+		t2:=-99.0;
 		for i:=1 to ndays do
 		begin
 			if (temps[i,2]=-99.0) then
@@ -135,6 +167,7 @@ if tmiss then
 				// Intercept:  c=y-mx 
 				// at y=y2 c=y2-m*x2
 				//
+//writeln('firstmissing,lastmissing,i,temps[i,2]:',firstmissing:4,lastmissing:4,i:4,temps[i,2]:8:3);
 				if t1>-99.0 then
 				begin
 					Slope:=(t2-t1)/(LastMissing-FirstMissing); //(y2-y1)/(x2-x1))
@@ -146,27 +179,27 @@ if tmiss then
 				//when dmiss run is at beginning of data
 				if t1=-99.0 then for j:=firstMissing to LastMissing do temps[j,2]:=t2;
 
+				//reset for remaining tests
+				CountMiss:=0;
+				t1:=-99.0;
+				t2:=-99.0;
 			end;
-			//reset for remaining tests
-			CountMiss:=0;
-			t1:=-99.0;
 		end;
 
 //Check Solar data:
 		CountMiss:=0;
 		t1:=-99.0;
+		t2:=-99.0;
 		for i:=1 to ndays do
 		begin
-if i=1 then writeln(' miss solar[1]:=',solar[1]:8:3);
-			if (Solar[i]=-99.0) then
-			begin
+			if (Solar[i]=-99.0) then Solar[i]:= 200;
+(*			begin
 				CountMiss:=CountMiss+1;
 				 //Start of missing data run
 				if CountMiss=1 then if i>1 then t1:= Solar[i-1];
 				if CountMiss=1 then FirstMissing:=i-1;
-if countmiss=1 then writeln('sol. start of dmiss. i,t1,firstm:',i:3,t1:8:3,firstmissing:5);
 			end;
-			
+	
 			//Is this dmiss run at end of data?
 			if i=ndays then if (Solar[i]=-99.0) then
 			begin
@@ -175,7 +208,7 @@ if countmiss=1 then writeln('sol. start of dmiss. i,t1,firstm:',i:3,t1:8:3,first
 				for j:=FirstMissing to ndays do Solar[j]:=FillValue;
 				countmiss:=0;
 			end;
- 
+
 			if ((Solar[i]<>-99.0)and(CountMiss>0)) then
 			begin
 				//found the end of missing data run.
@@ -197,21 +230,23 @@ if countmiss=1 then writeln('sol. start of dmiss. i,t1,firstm:',i:3,t1:8:3,first
 				//when dmiss run is at beginning of data
 				if t1=-99.0 then for j:=firstMissing to LastMissing do Solar[j]:=t2;
 
+				//reset for remaining tests
+				CountMiss:=0;
+				t1:=-99.0;
+				t2:=-99.0;
 			end;
-			//reset for remaining tests
-			CountMiss:=0;
-			t1:=-99.0;
-	
+*)
 		end;
 
 
 //Check Rain data:
 		CountMiss:=0;
 		t1:=-99.0;
+		t2:=-99.0;
 		for i:=1 to ndays do
 		begin
-			if (Rain[i]=-99.0) then
-			begin
+			if (Rain[i]=-99.0) then Rain[i]:= 0.0;
+(*			begin
 				CountMiss:=CountMiss+1;
 				 //Start of missing data run
 				if CountMiss=1 then if i>1 then t1:= Rain[i-1];
@@ -248,19 +283,75 @@ if countmiss=1 then writeln('sol. start of dmiss. i,t1,firstm:',i:3,t1:8:3,first
 				//when dmiss run is at beginning of data
 				if t1=-99.0 then for j:=firstMissing to LastMissing do Rain[j]:=t2;
 
+				//reset for remaining tests
+				CountMiss:=0;
+				t1:=-99.0;
+				t2:=-99.0;
 			end;
-			//reset for remaining tests
-			CountMiss:=0;
-			t1:=-99.0;
+*)
 		end;
-
-//Check RelHum data:
+//Check Wind data:
 		CountMiss:=0;
 		t1:=-99.0;
+		t2:=-99.0;
 		for i:=1 to ndays do
 		begin
-			if (RelHum[i]=-99.0) then
+			if (Winds[i]=-99.0) then
+(*			begin
+				CountMiss:=CountMiss+1;
+				 //Start of missing data run
+				if CountMiss=1 then if i>1 then t1:= Winds[i-1];
+				if CountMiss=1 then FirstMissing:=i-1;
+			end;
+			
+			//Is this dmiss run at end of data?
+			if i=ndays then if (Winds[i]=-99.0) then
 			begin
+				FillValue:=t1;
+				if t1=-99.0 then FillValue:=DefaultWind; //all data is missing.????
+				for j:=FirstMissing to ndays do Winds[j]:=FillValue;
+				countmiss:=0;
+			end;
+ 
+			if ((Winds[i]<>-99.0)and(CountMiss>0)) then
+			begin
+				//found the end of missing data run.
+				LastMissing:=i;
+				t2:=Winds[i];
+				// compute slope and intercept for y=mx+c
+				// Slope=m=(y2-y1)/(x2-x1)
+				// Intercept:  c=y-mx 
+				// at y=y2 c=y2-m*x2
+				//
+				if t1>-99.0 then
+				begin
+					Slope:=(t2-t1)/(LastMissing-FirstMissing); //(y2-y1)/(x2-x1))
+					Intercept:=t2-slope*Lastmissing;
+					for j:=firstMissing to LastMissing do
+						Winds[j]:=Slope*j+Intercept;
+				end;
+
+				//when dmiss run is at beginning of data
+				if t1=-99.0 then for j:=firstMissing to LastMissing do Winds[j]:=t2;
+
+				//reset for remaining tests
+				CountMiss:=0;
+				t1:=-99.0;
+				t2:=-99.0;
+			end;
+*)
+		end;
+
+
+
+// Check RelHum data:
+		CountMiss:=0;
+		t1:=-99.0;
+		t2:=-99.0;
+		for i:=1 to ndays do
+		begin
+			if (RelHum[i]=-99.0) then RelHum[i]:= 99.0;
+(*			begin
 				CountMiss:=CountMiss+1;
 				 //Start of missing data run
 				if CountMiss=1 then if i>1 then t1:= RelHum[i-1];
@@ -297,62 +388,16 @@ if countmiss=1 then writeln('sol. start of dmiss. i,t1,firstm:',i:3,t1:8:3,first
 				//when dmiss run is at beginning of data
 				if t1=-99.0 then for j:=firstMissing to LastMissing do RelHum[j]:=t2;
 
+				//reset for remaining tests
+				CountMiss:=0;
+				t1:=-99.0;
+				t2:=-99.0;
 			end;
-			//reset for remaining tests
-			CountMiss:=0;
-			t1:=-99.0;
-		end;
-
-//Check Wind data:
-		CountMiss:=0;
-		t1:=-99.0;
-		for i:=1 to ndays do
-		begin
-			if (Winds[i]=-99.0) then
-			begin
-				CountMiss:=CountMiss+1;
-				 //Start of missing data run
-				if CountMiss=1 then if i>1 then t1:= Winds[i-1];
-				if CountMiss=1 then FirstMissing:=i-1;
-			end;
-			
-			//Is this dmiss run at end of data?
-			if i=ndays then if (Winds[i]=-99.0) then
-			begin
-				FillValue:=t1;
-				if t1=-99.0 then FillValue:=tmaxd; //all data is missing.????
-				for j:=FirstMissing to ndays do Winds[i]:=FillValue;
-				countmiss:=0;
-			end;
- 
-			if ((Winds[i]<>-99.0)and(CountMiss>0)) then
-			begin
-				//found the end of missing data run.
-				LastMissing:=i;
-				t2:=Winds[i];
-				// compute slope and intercept for y=mx+c
-				// Slope=m=(y2-y1)/(x2-x1)
-				// Intercept:  c=y-mx 
-				// at y=y2 c=y2-m*x2
-				//
-				if t1>-99.0 then
-				begin
-					Slope:=(t2-t1)/(LastMissing-FirstMissing); //(y2-y1)/(x2-x1))
-					Intercept:=t2-slope*Lastmissing;
-					for j:=firstMissing to LastMissing do
-						Winds[j]:=Slope*j+Intercept;
-				end;
-
-				//when dmiss run is at beginning of data
-				if t1=-99.0 then for j:=firstMissing to LastMissing do Winds[j]:=t2;
-
-			end;
-			//reset for remaining tests
-			CountMiss:=0;
-			t1:=-99.0;
+*)
 		end;
 
 (*
+
 		for i:=1 to ndays do
 		begin
 		//	if (temps[i,1]=-99.0) then temps[i,1]:=tmaxd;
@@ -379,7 +424,6 @@ if countmiss=1 then writeln('sol. start of dmiss. i,t1,firstm:',i:3,t1:8:3,first
 			if (rain[i]=-99.0) then rain[i]:=DefaultPrecip;
 		end;
 	end;
-
 	if rmiss then
 	begin
 //		reporterror('Some rel. hum. data is missing.  Using 55%.');
@@ -400,6 +444,7 @@ if countmiss=1 then writeln('sol. start of dmiss. i,t1,firstm:',i:3,t1:8:3,first
 		end;
 	end;
 *)
+
 end;
 
 
@@ -420,17 +465,17 @@ begin
 			end;
 		if watts then
 		begin
-			{
-			All the GIS solrad data should be in watts.
-			Here we convert it to langleys:
-			1/0.484=2.066
-			Conversion units from http://www.ces.ncsu.edu/depts/hort/hil/pdf/hil-710.pdf  2/6/2002
+{
+All the GIS solrad data should be in watts.
+Here we convert it to langleys:
+1/0.484=2.066
+Conversion units from http://www.ces.ncsu.edu/depts/hort/hil/pdf/hil-710.pdf  2/6/2002
 
 (*
 http://www.solarbuzz.com/Consumer/Glossary2.htm
 Langley: Unit of solar irradiance, one calorie per square centimeter. 1 L = 41.84 kJ/m2. 
 *)
-			}
+}
 //if i=1 then writeln('wxunits sol[1]=',solar[1]:9:3);
 			if solar[i]>-99.0 then	solar[i] := solar[i]*2.066; //This converts solrad data from watts to langleys.
 		end;
@@ -489,34 +534,53 @@ var
 	tb:char;
 	a:array[0..255]of char;
 begin
-
+	tb:=#9; //tab
 	assign(wxfile,wxfilename);
 	{$i-} reset(wxfile) {$i+};
+
 	readln(wxfile,wxid);
-	tb:=#9; //tab
+
 	strPCopy(a,wxid); //get Pascal string into null-terminated string
 
-	//find 2nd tab in wxid header
-	i:=0;	repeat inc(i) until a[i]=tb; repeat inc(i) until a[i]=tb; a[i]:=#0;{null}
-	//transfer wxid up to 2nd tab into pascal string 'location'.
+	//find 1st tab in wxid header
+	i:=0;	repeat inc(i) until a[i]=tb; {repeat inc(i) until a[i]=tb;} a[i]:=#0;{null}
+	//transfer wxid up to 1st tab into pascal string 'location'.
 	//this avoids the extra text that may be at the end of the header.	
 	location:=strpas(a);	
-
 	readln(wxfile,Longitude,LatitudeDegrees);              {read long,latitude}
+
+
+//test code for metacot
+(* writeln('wxid=     ',wxid);
+writeln('location= ',location);
+readln;
+//setupstations;
+readln;
+*)
 
 	{Convert LatitudeDegrees from degrees to radians}
 	{1 degrees = 0.0174533 radians}
 	LatitudeRadians:= 0.0174533*LatitudeDegrees;
-
 	Adjustwx:=false;
 	for i:=1 to 5 do if wxcons[i]<>0.0 then Adjustwx:=true;
+
+//preset all wx vars to -55
+	for i:=1 to ndays do
+	begin
+		temps[i,1]:=-99;
+		temps[i,2]:=-99;
+		solar[i]:=-99;
+		rain[i]:=-99;
+		relhum[i]:=-99;
+		winds[i]:=-99;
+	end;
+
 	readln(wxfile);  {read line of column headers in data file}
+	
 	{read first line of data}
 	readln(wxfile,month,day,year,temps[1,1],temps[1,2],solar[1],rain[1],
 			 relhum[1],winds[1]);
-
-
-	wxday:=rdate(year,julian(month,day,year));
+	wxday:= rdate(year,julian(month,day,year));
 	ok:=true;
 
 	if (Modelstartdate < wxday) then
@@ -526,16 +590,17 @@ begin
 		exit;
 	end;
 
-
 	{read from wx file until date = ModelStartDate  or eof}
 	while (ok and (ModelStartdate > wxday) and not eof(wxfile)) do
 	begin
-
 		 readln(wxfile,month,day,year,temps[1,1],temps[1,2],solar[1],
 				  rain[1],relhum[1],winds[1]);
+(*	writeln(month:10,day:10,year:10,temps[1,1]:10:2,temps[1,2]:10:2,solar[1]:10:2,
+				  rain[1]:10:2,relhum[1]:10:2,winds[1]:10:2); 	
+*)				  
 		 wxday:=rdate(year,julian(month,day,year));
-
 	end;
+
 	if(Modelstartdate > wxday)then
 	begin
 	{	writeln('Weather data ends before model start date.');}
@@ -543,55 +608,50 @@ begin
 		runok:=false;
 		exit;
 	end;
+
 	if ok then
 	begin
 {		wxday:=wxday-1;}{for sequence test}
-		mm:=13;
+		mm:=13; //mm is month
 		i:=2;
+
 		while ((not eof(wxfile)) and (wxday < Lastdate)and (mm>0)) do
 		begin
-			readln(wxfile,mm,dd,yy,temps[i,1],temps[i,2],solar[i],
-				rain[i],relhum[i],winds[i]);
-			if mm>0 then begin month:=mm;day:=dd;year:=yy; end;
 
-//			wxdayPrev:=wxday;
-			if month>0 then	wxday:=rdate(year,julian(month,day,year));
-
-
-//writeln(mm,dd:3,yy:5,temps[i,1]:7:2,temps[i,2]:7:2,solar[i]:7:0,rain[i]:7:2,relhum[i]:7:2,winds[i]:7:2);
-(*
-//check for missing data
-if ((solar[i]<0)or(rain[i]<0)or(relhum[i]<0)or(winds[i]<0)
-	or(temps[i,1]<=-100.0)or(temps[i,2]<=-99.0))then
-begin
-writeln(mm,dd:3,yy:5,temps[i,1]:7:2,temps[i,2]:7:2,solar[i]:7:0,rain[i]:7:2,relhum[i]:7:2,winds[i]:7:2);
- readln;
-end;
-*)
-//writeln(' wxday,lastdate:',wxday:8:0,lastdate:8:0);
-//readln;
-
-
-//turn on the following block and line 238 to verify wx data date sequence:
-{
-			if (wxday-wxdayPrev)<>1 then
+			if (not (eof(wxfile)))then
 			begin
-				writeln('WEATHER DATA NOT IN SEQUENCE AT DATE ',month:2,day:3,year:5);
-				readln;
-			end;
-}
+				readln(wxfile,mm,dd,yy,temps[i,1],temps[i,2],solar[i],
+					rain[i],relhum[i],winds[i]);
+				if mm>0 then begin
+						 month:=mm;day:=dd;year:=yy;
+					     end;
 
-			inc(i);
+//				wxdayPrev:=wxday;
+				if month>0 then	wxday:=rdate(year,julian(month,day,year));
+
+
+//turn on the following block and line 563? to verify wx data date sequence:
+					{
+					if (wxday-wxdayPrev)<>1 then
+					begin
+						writeln('WEATHER DATA NOT IN SEQUENCE AT DATE ',month:2,day:3,year:5);
+						readln;
+					end;
+					}	
+
+				inc(i);
+			end;
 		end;
 
 		{here if wxday<Lastdate there is not enough data in the wx file }
 		if (wxday<Lastdate) then
 		begin
-//writeln('end date adjust.  wxday,lastdate:',wxday:8:1,lastdate:8:1);
+//			writeln('end date adjust.  wxday,lastdate:',wxday:8:1,lastdate:8:1);
 			reporterror('Model end date adjusted to end of weather data.');
 			ndays:=trunc(wxday-ModelStartDate);
 		 end;
 	end;
+
 	if ok then wxmissing;
 (*
 dec(i);

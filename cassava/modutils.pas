@@ -6,7 +6,7 @@ interface
 uses globals,sysutils;
 type
 	SINGLE100100 = array[1..100, 1..100] of single; //used for 2d delay
-	i100      = array[1..100] of integer;
+	i100         = array[1..100] of integer;
 
 Var
 	ok:boolean;
@@ -26,43 +26,43 @@ Procedure DelayExEarly(vin		: single;
 			var R    	: single100;  {R array}
 			del      	: single;     {Mean time through R}
 			dt       	: single;     {Amount of time to process}
-			k        	: integer;	{number of substages in R}
-			kearly		: integer);	{early exit cell}
+			k        	: integer;	  {number of substages in R}
+			kearly		: integer);	  {early exit cell}
 
-Procedure DelayNoPlr(viN      : single;     {input increment}
-		var Vout : single;     {flow out}
-		var r    : array of single;  {open-array r array}
-		del      : single;     {Mean time through r}
-		DT       : single;     {Amount of time to process}
-		k        : integer); {number of substages in r}
+Procedure DelayNoPlr(viN: single;     {input increment}
+		var Vout : single;             {flow out}
+		var r    : array of single;  	{open-array r array}
+		del      : single;     			{Mean time through r}
+		DT       : single;     			{Amount of time to process}
+		k        : integer); 			{number of substages in r}
 
-Procedure DelayWithPlr(viN      : single;    {input increment}
-		var Vout,           {flow out}
-		Shed     : single;    {attrition from array}
-		var r    : single100; {r array}
-		Plr      : single100; {Attrition array}
-		del      : single;    {Mean time through r}
-		DT       : single;     {Amount of time to process}
-		k        : integer); {number of substages in r}
+Procedure DelayWithPlr(viN: single;    {input increment}
+		var Vout,           			{flow out}
+		Shed     : single;    			{attrition from array}
+		var r    : single100; 			{r array}
+		Plr      : single100; 			{Attrition array}
+		del      : single;    			{Mean time through r}
+		DT       : single;    	 		{Amount of time to process}
+		k        : integer); 			{number of substages in r}
 
 Procedure Delay2d(incol1,inrow1       : single100;   {input increments}
 		var outcolvector : single100;   {flow out}
 		var outrowvector : single100;   {flow out }
-		var	r2d : single100100; {the 2d array}
-		ddpara      : single;     {parasite dd today}
+		var	r2d 		: single100100; {the 2d array}
+		ddpara      	: single;     	{parasite dd today}
 		delparasite     : single;		{Mean time for parasites}
-		kparasite		  : integer;	{number of substages for parasite}
-		ddhost      : single;     {fruit dd today}
-		delhost     : single;		{Mean time for fruit ageing}
-		khost		  : integer);	{number of substages for fruit}
+		kparasite		: integer;		{number of substages for parasite}
+		ddhost      	: single;     	{fruit dd today}
+		delhost     	: single;		{Mean time for fruit ageing}
+		khost		  	: integer);		{number of substages for fruit}
 
-Procedure delayTV(viN      : single;     {input increment}
-                 var Vout : single;     {flow out}
-                 var r    :single100;
-                 del      : single;     {Mean time through r, given current conditions (today's del)}
-		 var delp : single;     {previous deltat's del}
-                 DT       : single;     {Amount of time to process}
-                 k        : integer); {number of substages in r}
+Procedure delayTV(viN      	: single;     {input increment}
+                 var Vout 	: single;   {flow out}
+                 var r    	: single100;
+                 del      	: single;   {Mean time through r, given current conditions (today's del)}
+		 var delp 			: single;   {previous deltat's del}
+                 DT       	: single;   {Amount of time to process}
+                 k        	: integer); {number of substages in r}
 
 Function dot(var a,b : single100; { [1..N] OF single, N<=k }
    	             n   : integer) : single;
@@ -77,11 +77,11 @@ Procedure GISirngck(ivar,ilO,iHi:integer; Str:string);
 Procedure GISrngchk(v,rlo,rhi:single; Str:string);
 Procedure Holdit;
 Procedure irngck(ivar,ilO,iHi:integer; Str:string);
-Function Julian(Month,day,Year:integer):integer;
-Function log10(x:single) : single;
-Function NonZero(a:single100; k:integer) : Boolean;
-Function Power(base,exponent : single): single;
-Function rdate(Year,day:integer):single;
+Function  Julian(Month,day,Year:integer):integer;
+Function  log10(x:single) : single;
+Function  NonZero(a:single100; k:integer) : Boolean;
+Function  Power(base,exponent : single): single;
+Function  rdate(Year,day:integer):single;
 	
 Procedure ReportError(errormessage:string);
 Function max(r1,r2:single):single;
@@ -105,18 +105,18 @@ Function SumReal(A: array of real; m,n:word):real;
 {Procedure Setprn(iprn,ifun:integer);}
 Procedure wdwvec(     Xl:single;      {left edge of window}
    	                  xr:single;      {right edge of window}
-       	              k :integer;   {k substages in array}
+       	              k :integer;     {k substages in array}
            	          del:single;     {total range covered by array}
-               	  var  v:single100);  {array}
+               	  var v:single100);   {array}
 Procedure Xrdate(wd:single;j,year:integer;var month,nday:byte);
-Function Zerone(x:single):single;
 
+Function Zerone(x:single):single;
 implementation
 
 Function Asin(Arg:single) : single;
 {
 Returns inverse Sine Function in radians.
- after Programs for Scientists and Engineers, Alan r. Miller
+after Programs for Scientists and Engineers, Alan r. Miller
 (Used in daydegree Procedure.)
 }
 begin
@@ -187,12 +187,8 @@ begin
 		damage:=1.0;
 		if(LarvaPerBoll>0.0)then
 		case itype of
-				//	1: damage:=zerone(1.-EXPo(3.217762 + 0.134011 * LarvaPerBoll)/195.0); {PBW-survivorship of yield}
-				//	2: damage:=zerone(1.-0.10 * LarvaPerBoll); {PBW-survivorship of yield & quality}
 			1: damage:=zerone(1.-0.05 * LarvaPerBoll); {PBW-survivorship of yield}
-				//	2: damage:=zerone(1.-EXPo(1.467834 + 0.230335 * LarvaPerBoll)/170.0); {PBW-survivorship of yield & quality}
-	{8/3/05}	2: damage:=(1.145-0.006*expo(3.185+0.115*LarvaPerBoll)); {PBW-survivorship of yield & quality}
-
+	{8/3/05}2: damage:=(1.145-0.006*expo(3.185+0.115*LarvaPerBoll)); {PBW-survivorship of yield & quality}
 			3: damage:=zerone(1.0 - 0.06105599 * LarvaPerBoll);  {PBW -survivorship of lint}
 			4: damage:=zerone(1.0 - 0.08407368 * LarvaPerBoll); {PBWsurvivorship of seed }
 		end;
@@ -261,7 +257,7 @@ begin
 
 end;  {Daydegrees }
 
-FUNCTION DAYLIT(JULDAY:integer; LatitudeDegrees:single):single; //benno's rice
+FUNCTION DAYLIT(JULDAY:integer; LatitudeDegrees:single):single; //benno Graf rice model
 //	******************************
 //	This subroutine calculates the hours of daylight for a given date
 //	and latitude.
@@ -328,12 +324,14 @@ end;
 Function Daylength (LatitudeRadians: single; Jday: integer): single;
 {
 Calculate Daylength in hours, after the Function of 
-Penning de Vries and van Laar.
+Penning de Vries and van Laar. 
+*** serious error in this calculation -- USE Beno's daylit function instead
 }
 VAR
    delta,inter,beta,gamma: real;
 
 begin
+	{PI:= 3.1415;}
    gamma:= LatitudeRadians * (PI / 180.0);
    beta := -0.833 * (PI / 180.0);
    delta:= -23.4 * Cos (2.0 * PI * (Jday + 10.0) / 365.0) * (PI / 180.0);
@@ -342,30 +340,9 @@ begin
 
 //d:= (24.0 / PI * Arccos (inter))/60.0;
 //writeln('lat,day:',latituderadians:9:3,Jday:4);
-//writeln('P de V  dayl=',d:9:3);
+//writeln('P de V  dayl=', Daylength:9:3); readln;
 END;
 
-(*
-Procedure Daylength(julday:integer;LatRadians:single;var daylng:single);
-{
-	Given julian day and latitude in radians compute Daylength in hrs.
-     	LatRadians = latitude in radians
-}
-var
-	kdaysn:integer;
-	Decl:single;
-	Sunrise:single;
-begin
-	{ Compute the declination.}
-		kdaysn:=julday-81;
-		if(julday<81)then kdaysn:=365+kdaysn;
-		decl:=0.4064*sin(6.2832*kdaysn/365.0);
-	{ Compute photoperiod.}
-		Sunrise:=(-sin(LatRadians)*sin(decl))/(cos(LatRadians)*cos(decl));
-		Sunrise:=(1.5707963268-Asin(Sunrise))/0.0174533;
-		daylng:=(Sunrise/15.0)*2.0;
-end;
-*)
 
 Procedure Delay0(Vin      : single;     {input increment (comes in as number)}
                  var Vout : single;     {flow out (out as a rate)}
@@ -400,12 +377,12 @@ begin
 end; { Procedure Delay0}
 
 
-Procedure DelayNoPlr(Vin      : single;     {input increment}
+Procedure DelayNoPlr(Vin  : single;     {input increment}
                  var Vout : single;     {flow out}
                  var r    : array of single;  {open-array r array}
                  del      : single;     {Mean time through r}
                  DT       : single;     {Amount of time to process}
-                 k        : integer); {number of substages in r}
+                 k        : integer);   {number of substages in r}
 (*
  Use this version when the entire day's dd is processed in one call
  and there is no attrition.
@@ -439,23 +416,20 @@ end; { Procedure DelayNoPlr}
 Procedure delay2d(incol1,inrow1: single100;   {input increments}
 				var outcolvector : single100;   {flow out}
 				var outrowvector : single100;   {flow out }
-				var	r2d : single100100; {the 2d array}
+				var	r2d    	: single100100; {the 2d array}
 				ddpara      : single;     {parasite dd today}
-				delparasite     : single;		{Mean time for parasites}
-				kparasite		  : integer;	{number of substages for parasite}
+				delparasite : single;		{Mean time for parasites}
+				kparasite	: integer;	{number of substages for parasite}
 				ddhost      : single;     {fruit dd today}
 				delhost     : single;		{Mean time for fruit ageing}
-				khost		  : integer);	{number of substages for fruit}
+				khost		: integer);	{number of substages for fruit}
 (*
-
  2d delay - for parasitoids growing inside hosts.
-
  They move across rows as they age, they move across columns as the
  hosts age.  When they move out of the last row (>age max of parasite stage)
  they become adults and join the adult pool outside.
  Oviposit inputs are through the input array inRow1. Which column of ovip
  input is determined by the age preference of the parasite for host. 
-
  outrowvector will have all old parasites ageing out.
  outcolvector will represent the oldest host age. 
  *)
@@ -463,7 +437,6 @@ Procedure delay2d(incol1,inrow1: single100;   {input increments}
 var
 	i,j,kol,krow,iddpara,iddhost : integer;
 	a : single;
-
 begin
 	for i:=1 to kparasite do outcolvector[i]:=0.0;
 	for i:=1 to khost do outrowvector[i]:=0.0;
@@ -517,9 +490,7 @@ Function log10(x:single):single;
 begin
 	log10:=0.0;
 	if x>0.0 then log10:=ln(x)/ln(10.0)
-//	else
-//	ReportError('Error. Log10 of nonpositive argument. Using 0.0 as result.');
-//if x>0.0 then begin writeln('log10 of ',x:8:3);readln;end;
+
 end;
 
 
@@ -534,12 +505,12 @@ end;
 
 Procedure DelayExEarly(Vin		: single;
 			var ExEarly: single;     {early exit from interior cell}
-			var Vout 	: single;     {flow out from last cell}
-			var R    	: single100;  {R array}
-			del      	: single;     {Mean time through R}
-			dt       	: single;     {Amount of time to process}
-			k        	: integer;	{number of substages in R}
-			kearly		: integer);	{early exit cell}
+			var Vout 	: single;    {flow out from last cell}
+			var R    	: single100; {R array}
+			del      	: single;    {Mean time through R}
+			dt       	: single;    {Amount of time to process}
+			k        	: integer;	 {number of substages in R}
+			kearly		: integer);	 {early exit cell}
 {
  Standard delay except values transiting between cells kearly and kearly+1 are
  intercepted and returned as variable ExEarly  (exit early).
@@ -547,7 +518,6 @@ Procedure DelayExEarly(Vin		: single;
 var
 	i,j,idt : integer;
         a : single;
-
 begin
 	ExEarly:=0.0;
 	Vout := 0.0;
@@ -578,9 +548,9 @@ Procedure DelayWithPlr(Vin      : single;    {input increment}  {Formerly called
                DT       : single;   {Amount of time to process}
                k        : integer); {number of substages in r}
 var
-	idt : integer;
-	i,j:byte;
-        a,shd : single;
+	idt 	: integer;
+	i,j		: byte;
+    a,shd 	: single;
 begin
 	Shed := 0.0;
 	Vout := 0.0;
@@ -609,7 +579,6 @@ begin
                 	r[1] := r[1]-shd;
 		end  {for J}
 		else
-
                 {Plr is zero = no attrition is done }
 		for j := 1 to idt do
 		begin
@@ -639,6 +608,7 @@ var
 	deld:single;
 begin
 	Vout := 0.0;
+
         if dt>0.0 then
         begin
         	iDT:= trunc(1.+(2.*DT*(k/del)));
@@ -668,28 +638,6 @@ begin
      Dot := x;
 end; 
 
-(*
- need delphi version of elapsed time.
-Procedure Elapsedtime(iHr,iMiN,iSEC,ic1,iHr2,iMiN2,iSEC2,ic2:word);
-{write elapsed time since last gettime}
-begin
-	if(ic2 < ic1)then begin
-		ic2:=ic2+100;
-		isec2:=isec2-1;
-	end;
-	if(isec2 < isec)then begin
-		isec2:=isec2+60;
-		imin2:=imin2-1;
-	end;
-	if(imin2 < imin)then begin
-		imin2:=imin2+60;
-		ihr2:=ihr2-1;
-	end;
-	if(ihr2 < ihr)then 	ihr2:=ihr2+12;
-
-
-end; { Elapsedtime}
-*)
 
 Function Expo(arg:single):single;
 {limit argument to exp Function. 14mar90}
@@ -698,10 +646,7 @@ Function Expo(arg:single):single;
 var a:single;
 begin
      a:=arg;
-//     if a>88.0 then a:=88.0;
-//     if a<-11356.0 then a:=-11356.0;
      if a>88.6 then a:=88.6;
-
      expo:=exp(a);
 end;
 
@@ -725,9 +670,6 @@ Function FFTemperature(T,Tlow,THigh: single):single;
 {
  Returns a value between 0 and 1 from a Function shaped like a symmetrical hump (parabola)
  with the maximum at the midrange of Tlow and THigh.  The Function is 0 at Tlow and THigh.
-
-	Before 9/18/06 there was an error in this Function causing the left intercept to be at 0.0
-	rather than at Tlow.  See MODELS/HUMP.XLS.
 }
 var
 	A:single; //half the difference between Tlow and THigh
@@ -821,12 +763,29 @@ Function Julian(Month,day,Year:integer):integer;
 Const
 	iNCr   : array[1..12] of integer=(0,31,59,90,120,151,181,212,243,273,304,334);
 	lNCr   : array[1..12] of integer=(0,31,60,91,121,152,182,213,244,274,305,335);
-	MrANGE : array[1..12] of integer=(31,28,31,30,31,30,31,31,30,31,30,31);
+
+{changed 6/2009 by APG to accomodate Delphi6}
+{	MrANGE : array[1..12] of integer=(31,28,31,30,31,30,31,31,30,31,30,31);}
 var
-	x:single;
+	x,xx:single;
 	vs:string;
+	MrANGE : array[1..12] of integer;
 begin
-	JuliAn:=0;
+	Julian:=0;
+{changed 6/2009 by APG to accomodate Delphi6}
+MrANGE [1]:=31;
+MrANGE [2]:=28;
+MrANGE [3]:=31;
+MrANGE [4]:=30;
+MrANGE [5]:=31;
+MrANGE [6]:=30;
+MrANGE [7]:=31;
+MrANGE [8]:=31;
+MrANGE [9]:=30;
+MrANGE [10]:=31;
+MrANGE [11]:=30;
+MrANGE [12]:=31;
+
 	iF(Year<0) or (Year>10000)then	
 	begin
 		str(year:8,vs);	
@@ -838,11 +797,15 @@ begin
 	begin
 		str(Month:8,vs);	
 		reporterror(' Invalid Month in Julian Function: '+vs);
-	//	Writeln(' invalid Month ',Month,' day= ',day,' year= ',year);
+
 		Exit;
 	end;
+{	if (year MOD 4)= 0 then Mrange[2]:= 29 else Mrange[2]:= 28;}
+{changed 6/2009 by APG to accomodate Delphi6}
+	xx:= year MOD 4;
+	if xx = 0 then Mrange[2]:= 29 else Mrange[2]:= 28;
+{ writeln('xx=',xx:8:3); readln;}
 
-	if(Year mod 4 = 0)then	Mrange[2]:=29 else Mrange[2]:=28;
 	if not (Day in [1..Mrange[Month]] )then
 	begin
 		str(day:8,vs);	
@@ -862,16 +825,6 @@ begin
      Power:=expo(exponent * ln(Base));
 end; {Power}
 
-(*	Function rdate(iYr,iday)
-C return date in lotus form (nr of days since 12/31/1899).
-C iYr is <100
-C iday is julian day
-	rdate=365.25*iYr+iday
-C ANiNT is fortran round Function.
-	rdate=anint(rdate+.25)
-	return
-	end
-*)
 
 Function RandNorm(mean,stdev:single):single;
 {Produce random numbers with a Normal (Gaussian) distribution.}
@@ -899,8 +852,6 @@ var
 	x1:real;
 begin
 	x1:=(365.25 * (Year mod 100)) + Day + 0.251;
-//writeln('year,x1:',year:6,x1:9:1);
-//writeln('(Year mod 100),(Year mod 1000):',(Year mod 100):8,(Year mod 1000):8);
 	if year=2000 then x1:=(365.25 *  100) + Day + 0.251;
 	if year>2000 then
 	begin
@@ -910,7 +861,6 @@ begin
 	rdate := round(x1);
 //writeln('x1=',x1:9:0);
 end;
-
 
 Procedure ReportError(errormessage:string);
 {Write error message to error log file - not to dos window.}
@@ -966,25 +916,6 @@ begin
 	end;
 end;
 
-
-{
-	Function RunAv(v,N)
-C Fortran version
-C Provide a running average of N most recent values of v.
-C v's are stored in array r.
-C On first call fill r with v.
-C local index k increments with each call and cycles 1 to N.
-	DiMENSiON r(10)
-	DATA k/0/
-	iF(k.EQ.0)CAll Fill(r,N,v)
-	k=k+1
-	iF(k.GT.N)k=1
-	r(k)=v
-	rUNAv=SUM(r,N)/N
-	rETUrN
-	end
-}
-
 Function runav(v : single; var r:single100; var i: integer; n:integer):single;
 {
 	Do running average of most recent n values of v.
@@ -1036,9 +967,7 @@ Function SingleDot(A: array of single;B:array of single; n:integer):single;
 var X:single;
     i:integer;
 begin
-
      X:=0.0;
-
     for i := 0 to n-1 do
 	begin
 	  x:= x + a[i]*b[i];
@@ -1051,7 +980,6 @@ Function SingleSum(A: array of single; m,n:word):single;
 (*
 Sum the entries of an array from index m to n.
 A is an open-array parameter so m and n are decremented by 1.
-
 *)
 var
 	i:integer;
@@ -1066,7 +994,6 @@ Function SumReal(A: array of real; m,n:word):real;
 (*
 Sum the entries of an array from index m to n.
 A is an open-array parameter so m and n are decremented by 1.
-
 *)
 var
 	i:integer;
@@ -1076,8 +1003,6 @@ begin
 	for i:=m-1 to n-1 do s:=s+a[i];
 	SumReal:=s;
 end;
-
-
 
 Function Sum(var a   : single100;
                  m,n : integer                    ) : single;
@@ -1093,7 +1018,6 @@ begin
    Sum:=temp;
 end; {Function Sum}
 	
-
 Function Sum2dcolumn(r2d:single100100;kol,k:integer) : single;
 (*
  Sum the entries of column kol of a 2d array.
@@ -1120,7 +1044,6 @@ begin
 	Sum2drow:=Sum2d;
 end;
 
-
 Procedure Wdwvec(     xl:single;      {left edge of window}
                       xr:single;      {right edge of window}
                       k :integer;   {k substages in array}
@@ -1138,20 +1061,16 @@ cell.  In this case the edge cell of the window is assigned a value between 0 an
 cke 10/26/06
 *)
 
-
 var delkloc,xrloc,xlr,xrl,fracl,fracr:single;
 var kl,kr,i:integer;
 
 begin
 	if xl>xr then
 	begin
-//		writeln('Invalid arguments to wdwvec. low value=',xl:8:3,'  high=',xr:8:3);halt(1);
 		reporterror(' Invalid arguments to wdwvec.');
 	end;
 	delkloc:=del/k;
-
 	iF(xr <= del)then xrloc := xr else xrloc := del;
-
 	kl:=trunc(xl/delkloc) + 1;
 	iF(kl>k)then kl:=k;
 	kr:=trunc(xrloc/delkloc)+1;

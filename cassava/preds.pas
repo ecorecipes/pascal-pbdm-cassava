@@ -11,7 +11,7 @@ pa,PreyFound:single;
 function G(age:real):real;
 { converts green mite prey older than eggs to 'egg equivalents'.}
 	begin 	
-	G:=power(10,0.00496*age); 
+	G:=power(10.0,(0.00496*age)); 
 	end;
 
 Procedure predsetup;
@@ -19,47 +19,45 @@ Procedure predsetup;
 {	Tariporec,Tmanihotirec : predvarietyrec;}
 var
 	i,j,k:integer;
-	convt:single;
 begin
 (* change logic so the initialization code is written only once and this
 routine is parameterized with (var prec:predvarietyrec;var pptrs: predarray);
 and called : Taripoinfield then predsetup(Tariporec,Taripoptrs);
 *)
 (* T. aripo 
- 0    28.6   42.2   58.48    74.8   110.2         350.0         396.0} {Ganonvassou et al. 2003}
- |-ova-|-larv-|-proto-|-deuto-|-preov-|--ovip-------|--post ovip --|
+ 0    20.4   33.4   50.65    66.13  116.7    226                   260.6
+ |-ova-|-larv-|-proto-|-deuto-|-preov-|--ovip--|--------adults -----|
 *)
 
 	if Taripoinfield then
 	with Tariporec do
 	begin
-		predbase:= 11.4;
-		tpeak:=    12.0; {dda 11.4CC - 23.4C - 35.4C - confirms feeding experiments of MUTISYA et al. 2014}
-		delpred:= 396.0;
-		predage[1]:=28.56;  {egg}
-		predage[2]:=42.16;  {larva}
-		predage[3]:=58.48;  {protonymph}
-		predage[4]:=74.80;  {deutonymph}
-		predage[5]:=110.16; {preovip}
-		predage[6]:=350.00+50; {ovips}
-		predage[7]:=396.00+50; {max age }
+		predbase := 11.4;
+		tpeak:=12.0; {confirms feeding experiments of MUTISYA et al. 2014}
+		delpred:=260.6;
+		predage[1]:=20.4;  {egg}
+		predage[2]:=33.41; {larva}
+		predage[3]:=50.65; {protonymph}
+		predage[4]:=66.13; {deutonymph}
+		predage[5]:=116.7; {preovip}
+		predage[6]:=226.11;{ovips}
+		predage[7]:=260.6; {max age}
 { growth 
 		{preddem units are (prey egg equivalents)/dd.}
 		preddem[1]:=0.0;
-		preddem[2]:=1.5*0.16; {micrograms per dd  but it is 9.4 eggs over the laval stage at 25C}
-		preddem[3]:=1.5*0.20; { 15.6 eggs over protonymph at 25C}
-		preddem[4]:=1.5*0.37; { 25 eggs over duteronymph at  25C}
-		preddem[5]:=1.5*0.36; { 89 eggs overpreoviposition fem adult at 25C}
-		preddem[6]:=1.5*0.39; {191 eggs over fem adult in ovip period at 25C}
-		preddem[7]:=1.5*0.3;  { 95 eggs over fem adult in post-oviposition at 25C} 
-
-		predfec:=   2*0.042;  {yaninek estimate 11/21/24  eggs/dda 11.4C -- see MUTISYA et al. 2014} 
-		predsexr1:= 0.66;  {2 fems:1.0 males}
-		rhlim:= 	10.0;
-		sdmin:= 	0.5; {for pollen effect on survival and reproducction}
-		delkpred:= delpred/kpred;
-		predalphain:= 1.2; {*******search rate******}
-		predalpha:=   1.2;
+		preddem[2]:=0.16; {micrograms per dd  but it is 9.4 eggs over the laval stage at 25C}
+		preddem[3]:=0.20; { 15.6 eggs over protonymph at 25C}
+		preddem[4]:=0.37; { 25 eggs over duteronymph at  25C}
+		preddem[5]:=0.36; { 89 eggs overpreoviposition fem adult at 25C}
+		preddem[6]:=0.39; {191 eggs over fem adult in ovip period at 25C}
+		preddem[7]:=0.3;  { 95 eggs over fem adult in post-oviposition at 25C} 
+		predfec:= 2*0.105 {0.058 ??????????????2??????????????????????????????????}; 
+		predsexr1:=0.66; {2 fems:1.0 males}
+		rhlim:= 20.0;
+		sdmin:= 0.4; {for pollen effect on survival and reproducction}
+		delkpred:=delpred/kpred;
+		predalphain:= 1.2;
+		predalpha:= 1.0;
 		wdwvec(0.0,       predage[1],kpred,predage[7], veggs);
 		wdwvec(predage[1],predage[2],kpred,predage[7], vlarva);
 		wdwvec(predage[2],predage[3],kpred,predage[7], vproto);
@@ -68,28 +66,29 @@ and called : Taripoinfield then predsetup(Tariporec,Taripoptrs);
 		wdwvec(predage[5],predage[6],kpred,predage[7], vovipad);
 		wdwvec(predage[6],predage[7],kpred,predage[7], vadult);
 		wdwvec(predage[1],predage[7],kpred,predage[7], vreport);
-	end;	
+
+	end;
+	
 
 (* T. manihoti
-  0    39.06  61.4   81.8    98.6     120.9        254.8         288.30
-  |-ova-|-larv-|-proto-|-deuto-|-preov-|--ovip-------|--post ovip --|
-predage 1      2       3       4       5             6              7
+  0    28.9    44.1   63.34   82.44   136   290.82          342.05
+  |-ova-|-larv-|-proto-|-deuto-|-preov-|--ovip--|-------adults --|
+predage 1      2       3       4       5        6                7
 *)
 	if Tmanihotiinfield then
 	with Tmanihotirec do
 	begin
 		predbase := 6.64;
-		convt:= 1.0 {0.74}; {with new base as 11C}
-		tpeak:= 13.2; {dda 6.64C - 19.6  - 32.8}
- 		delpred:=  288.30*convt;
-		predage[1]:=39.06*convt;  {egg}
-		predage[2]:=61.38*convt;  {larva}
-		predage[3]:=81.84*convt;  {protonymph}
-		predage[4]:=98.58*convt;  {deutonymph}
-		predage[5]:=120.90*convt; {preovip}
-		predage[6]:=254.82*convt; {ovips}
-		predage[7]:=288.30*convt; {max age }
-{preddem units are prey (eggs+larvae)/dd (may attack own also).}
+		tpeak:=13.2;
+ 		delpred:= 342.05;
+		predage[1]:=28.9;   {egg}
+		predage[2]:=44.1;   {larva}
+		predage[3]:=63.34;  {protonymph}
+		predage[4]:=82.44;  {deutonymph}
+		predage[5]:=136.05; {preovip}
+		predage[6]:=290.82; {ovips}
+		predage[7]:=342.05; {max age }
+		{preddem units are prey (eggs+larvae)/dd (may attack own also).}
 		preddem[1]:=0.0;
 		preddem[2]:=0.22; {micrograms per dd}{ 16.0 over laval stage at 25C}
 		preddem[3]:=0.21;  { 18 eggs over protonymph stage at 25C}
@@ -97,14 +96,14 @@ predage 1      2       3       4       5             6              7
 		preddem[5]:=0.41;  { 98 eggs over preoviposition at 25C}
 		preddem[6]:=0.37;  {257 over ovip period at 25C}
 		preddem[7]:=0.27;  { 63 over post-oviposition at 25C} 
-		predfec:=   0.18; {eggs/dda>6.64C?} 
+		predfec:= 2* 0.064 {??????????2???????????}; 
 
-		predsexr1:= 0.66;   {2 fems:1.0 males}
-		rhlim:=      35;
-		sdmin:=     0.0 ; {no pollen effect for Tmanihoti}
-		delkpred:= delpred/kpred;
-		predalphain:= 0.8;
-		predalpha:=   0.8; {search rate < random}
+		predsexr1:=0.66; {2 fems:1.0 males}
+		rhlim:= 40.0;
+		sdmin:= 0.0; {no pollen effect for Tmanihoti}
+		delkpred:=delpred/kpred;
+		predalphain:=1.0;
+		predalpha:=1.0;
 		wdwvec(0.0       ,predage[1],kpred,predage[7], veggs);
 		wdwvec(predage[1],predage[2],kpred,predage[7], vlarva);
 		wdwvec(predage[2],predage[3],kpred,predage[7], vproto);
@@ -157,7 +156,7 @@ predage 1      2       3       4       5             6              7
 		for k:=1 to ncas do
 		begin
 			j:=deck[k];
-			
+
 			new(Tmanihotiptrs[j]);
 			with Tmanihotiptrs[j]^ do with Tmanihotirec do
 			begin
@@ -277,27 +276,18 @@ end;
 
 procedure PredMort(predvar:predvarietyrec; var pptr:predptr);
 {
-Mortality due to  rel humidity and temperature.
+Mortality due to  rel humidity.
 }
 var
-	vpd,theta,lx:single;
+	lx:single;
 	i:word;
-	
-
 begin
 	with predvar do with pptr^ do
 	begin
-(*vapor pressure deficit not implemented as lx *)
-		vpd:= 610.7*power(10,(7.5*Tmean/(237.3 + Tmean)))*(1-RHmean/100)/1000;
-//		theta:= min(1.0, 4.24*vpd/(1+POWER(3.25,VPD)));
 		if (rhmean<=rhlim) then lx:=0.1
-//		if rhlim = 35 then lx:=max(0.05, min(0.99,(1.5*-0.1105*vpd + 1.1054)))
 		else
-		lx:= max(0.1, exp(-2.0/(rhmean-rhlim)));
-		if lx>1.0 then lx:=1.0;
-//writeln(rhmean:10:4,tb, tmean:10:4,tb,rhlim:10:4,tb,lx:10:4);readln;
+		lx:=max(0.0, exp(-2.0/(rhmean-rhlim)));
 		for i:=1 to kpred do prednums[i]:= prednums[i]*lx;	
-
 	end;
 
 end;
@@ -313,9 +303,8 @@ begin
 	with pptr^ do with predvar do
 	begin
 		f:= ffdd(preddd,tpeak);
-		sd:= max(predsd,sdmin);						{allows 0.5 min sd for T. aripo - pollen effect}		
+		sd:= max(predsd,sdmin);		{allows 0.4 min sd for T. aripo - pollen effect}
 		bn1:= f*predn[6]*predsexr*predfec*preddd*sd;
-		if predsexr = 0.66 then preddd:= preddd*sd; {this extends T. aripo del time on pollen}
 
 		DelayNoPLR(bn1,oldout,prednums,predage[7],preddd,kpred);
 //writeln(f:10:3,tb,predn[6]:10:3,tb,predsexr:10:3,tb,predfec:10:3,tb,preddd:10:3,tb,sd:10:3); readln
@@ -325,8 +314,7 @@ end; {preddyn }
 Procedure predsup(demtot:single;
                  var pptr: predptr;predvar:predvarietyrec;
 		 PA:single;	 var PreyFound:single);
-		 
-(*CGM stages
+(*
  0          68                       154      166                          486
  |----eggs---|--------immatures--------|-preova-|--------adults ovip---------|
 
@@ -413,10 +401,10 @@ end;
 
 procedure overlap(var mort1,mort2:single);
 {
-	to get the corrected mortality when there is an overlap.
-	o = overlap = prey attacked by both preds
-	mort1/(mort1+mort2) = fraction of overlap to count as part of mort1.
-	ke. 10oct95
+to get the corrected mortality when there is an overlap.
+ o = overlap = prey attacked by both preds
+ mort1/(mort1+mort2) = fraction of overlap to count as part of mort1.
+ke. 10oct95
 }
 
 var
@@ -447,7 +435,7 @@ begin
 	begin
 		predsdr(pptr,gmmort,Pa,demtot);
 		preddyn(predvar,pptr);
-		PredMort(predvar,pptr);{need to redo the function of rhmean  ?}
+		PredMort(predvar,pptr);{need to redo the function of rhmean  ???????????????????///}
 		predsdone(np,pptr,predpresent);
 	end;
 end;
@@ -523,7 +511,7 @@ begin
 			if Tmanihotithisplant then predmodpart1(np,Tmanihotirec,Tmanihotiptrs[np],demtot2,mort2);
 		end; 
   
-		MiteSurv:=(1.0 - mort1)*(1.0 - mort2);
+		MiteSurv:=(1.0-mort1)*(1.0-mort2);
 		MiteMort(np,MiteSurv);
 
 		if (Taripothisplant and Tmanihotithisplant)then overlap(mort1,mort2);
@@ -531,12 +519,12 @@ begin
 		if Taripothisplant then
 		begin
 			predmodpart2(np,Tariporec,Taripoptrs[np],mort1,demtot1,Taripothisplant);
-{SD mort and emigration}
-{This has to be done separately for Taripo and Tmanihoti since the
-Taripopool and the Tmanihoti pool are across all plants.}
+			{SD mort and emigration}
+			{This has to be done separately for Taripo and Tmanihoti since the
+			Taripopool and the Tmanihoti pool are across all plants.}
 			with Taripoptrs[np]^do with Tariporec do
 			begin
-				sd:= max(predsd,sdmin); {allows min sd for Taripo - pollen effect} //?????? sd not used ?????????
+				sd:=max(predsd,sdmin); {allows min sd for Taripo - pollen effect} //?????? sd not used ?????????
 				for i:=1 to kpred do
 				begin
 					if immigmethod=2 then
@@ -571,7 +559,7 @@ Taripopool and the Tmanihoti pool are across all plants.}
 			for i:=1 to kpred do
 			begin
 				if immigmethod=2 then
-				Tmanihotiimmigpoolb:= Tmanihotiimmigpoolb + prednums[i]*(1.0-predsd);
+				Tmanihotiimmigpoolb:=Tmanihotiimmigpoolb+prednums[i]*(1.0-predsd);
 				prednums[i]:=prednums[i]*predsd;
 			end;
 			Tmanihotidays:=Tmanihotidays+Tmanihotiptrs[np]^.predreport;
