@@ -37,11 +37,12 @@ The `Summary.txt` file is used for statistical analyses and the means, std and c
 Then the analysis can begin.
 
 Andrew Paul Gutierrez
+
 Luigi Ponti
 
 ## License
 
-GPL-3.0-or-later
+SPDX-License-Identifier: [GPL-3.0-or-later](https://spdx.org/licenses/GPL-3.0-or-later.html)
 
 ## Authors
 
