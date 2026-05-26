@@ -456,6 +456,7 @@ var
 
 
 	immigmethod,immigmethodsave : integer; {1=source unknown, 2=daily migrant pool}
+	milsecdelay : integer; {GUI graphics delay - read from ini but unused in batch mode}
 	immigcounter:integer;
 	{
 		pools of migrants.

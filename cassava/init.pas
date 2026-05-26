@@ -485,6 +485,7 @@ begin
 {fungus mort}
 	readln(setfile,ch);fminfield:=(upcase(ch)='T');
 
+	readln(setfile,milsecdelay); {GUI graphics delay - unused in batch mode}
 	readln(setfile,immigmethod); {1:source=unknown, 2:source=pool}
 	immigmethodsave:=immigmethod;
 {Read Randseed - system variable for the randomize function.  if > 0 then use same random sequence each time.}
